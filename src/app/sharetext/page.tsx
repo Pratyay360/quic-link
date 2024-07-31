@@ -10,7 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import createClient from '@/../utils/supabase';
 import { toast, Toaster } from "sonner";
+
 async function shareText() {
   const textArea = document.getElementById("textArea") as HTMLTextAreaElement;
   const eurl = textArea.value;
@@ -18,27 +20,27 @@ async function shareText() {
     toast.error("Please enter text");
     return;
   } else {
-    const response = await fetch("/api/sharetext", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: eurl }),
-    });
-    const data = await response.json();
-    if (data.error) {
-      toast.error("Error sharing text");
-    } else {
-      const element = document.getElementById("hideC");
-      if (element) {
-        element.classList.remove("hidden");
-        const url = document.getElementById("url") as HTMLTextAreaElement;
-        url.value = `https://text-share.vercel.app/${data.id}`;
-        toast.success("Text shared");
-      } else {
-        toast.error("Error sharing text");
-      }
+    const supabase = createClient;
+    const short = "abcdefghijklmnopqrstuvwxyz";
+    const capital = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const all = short + capital + numbers;
+    let result = "";
+    for (let i = 0; i < 6; i++) {
+      result += all[Math.floor(Math.random() * all.length)];
     }
+    await supabase.from("sharedtext").insert([{ id: result, shared_text: eurl }])
+    .then(
+      () => {
+        const element = document.getElementById("hideC");
+        if (element) {
+          element.classList.remove("hidden");
+          const url = document.getElementById("url") as HTMLTextAreaElement;
+          url.value = `https://text-share.vercel.app/${result}`;
+          toast.success("Text shared");
+        }
+      }
+    )
   }
 }
 function copyUrl() {
@@ -82,7 +84,7 @@ export default function Home() {
               <div className="flex items-center space-x-2 mt-4">
                 <Textarea
                   id="url"
-                  className="flex-grow p-2 border border-gray-300 rounded-md bg-gray-50"
+                  className="flex-grow p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 "
                   readOnly
                 />
                 <CardFooter className="flex justify-between">
