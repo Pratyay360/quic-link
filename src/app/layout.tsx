@@ -6,8 +6,8 @@ import Navbar from "./navbar/page";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QuickLink",
-  description: "QuickLink is a simple URL shortener and text sharer.",
+  title: "Quic-Link",
+  description: "Quic-Link is a simple URL shortener and text sharer.",
 };
 
 export default function RootLayout({

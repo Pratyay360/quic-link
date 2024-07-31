@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/../utils/supabase/server";
 import SharedTextCard from "./SharedTextCard";
-import { toast } from "sonner";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -30,7 +29,11 @@ export default async function Page({ params }: { params: { id: string } }) {
       .select("large_url")
       .match({ id: id });
     if (shorturls) {
-      redirect(shorturls[0].large_url);
+      if (shorturls[0]?.large_url.includes("http")) {
+        redirect(shorturls[0]?.large_url);
+      } else {
+        redirect("/datanotfound");
+      }
     } else {
       redirect("/datanotfound");
     }

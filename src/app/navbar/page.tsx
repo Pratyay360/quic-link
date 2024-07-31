@@ -12,14 +12,14 @@ export default function Navbar() {
                 Home
               </span>
             </Link>
-            <Link href="/sharetext">
-              <span className="mr-5 dark:text-white hover:text-gray-500 cursor-pointer">
-                Share Text
-              </span>
-            </Link>
             <Link href="/shorturl">
               <span className="mr-5 dark:text-white hover:text-gray-500 cursor-pointer">
                 Short Url
+              </span>
+            </Link>
+            <Link href="/sharetext">
+              <span className="mr-5 dark:text-white hover:text-gray-500 cursor-pointer">
+                Share Text
               </span>
             </Link>
             <div className="mr-5 dark:text-white hover:text-gray-500 cursor-pointer z-auto ">

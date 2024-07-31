@@ -36,7 +36,7 @@ async function shareText() {
         if (element) {
           element.classList.remove("hidden");
           const url = document.getElementById("url") as HTMLTextAreaElement;
-          url.value = `https://text-share.vercel.app/${result}`;
+          url.value = `https://quic-link.netlify.app/${result}`;
           toast.success("Text shared");
         }
       }

@@ -16,8 +16,8 @@ import createClient from '@/../utils/supabase';
 async function shareUrl() {
   const res = document.getElementById("largeUrlArea") as HTMLTextAreaElement;
   const eurl = res.value;
-  if (eurl.length == 0) {
-    toast.error("Please enter text");
+  if (eurl.includes("http") === false) {
+    toast.error("Please enter a valid URL");
     return;
   } else {
     const supabase = await createClient;
@@ -36,7 +36,7 @@ async function shareUrl() {
         if (element) {
           element.classList.remove("hidden");
           const url = document.getElementById("url") as HTMLTextAreaElement;
-          url.value = `https://text-share.vercel.app/${result}`;
+          url.value = `https://quic-link.netlify.app/${result}`;
           toast.success("URL shared");
         }
       }
