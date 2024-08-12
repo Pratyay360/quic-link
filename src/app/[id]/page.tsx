@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       .select("large_url")
       .match({ id: id });
     if (shorturls) {
-      if (shorturls[0]?.large_url.length > 0) {
+      if (shorturls[0]?.large_url.length) {
         redirect(shorturls[0]?.large_url);
       } else {
         redirect("/datanotfound");
