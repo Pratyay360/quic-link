@@ -13,31 +13,12 @@ import {
 import { toast, Toaster } from "sonner";
 import createClient from "@/../utils/supabase";
 
-function validateAndAppendHttps(url: string): string | null {
-  url = url.trim();
-  const urlPattern = new RegExp(
-    '\\b((?:https?:\\/\\/)?(?:www\\.)?[\\w-]+(\\.[\\w-]+)+([\\/\\w-\\.\\~\\?\\=\\&\\%\\#]*)*\\/?)\\b'
-  );  
-  if (!urlPattern.test(url)) {
-    return null;
-  }
-
-  // If the URL does not start with http or https, prepend https
-  if (!/^https?:\/\//i.test(url)) {
-    url = "https://" + url;
-  }
-
-  return urlPattern.test(url) ? url : null;
-}
-
 async function shareUrl() {
   const res = document.getElementById("largeUrlArea") as HTMLTextAreaElement;
   let eurl: string = res.value;
-
-  // Use our new validation function
-  const validatedUrl = validateAndAppendHttps(eurl);
-
-  if (!validatedUrl) {
+  eurl = eurl.trim();
+  const validatedUrl = eurl;
+  if (!validatedUrl){
     toast.error("Please enter a valid URL");
     return;
   } else {
