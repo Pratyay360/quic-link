@@ -12,12 +12,18 @@ import {
 } from "@/components/ui/card";
 import { toast, Toaster } from "sonner";
 import createClient from "@/../utils/supabase";
-
+function validateUrl(url: string): string | null {
+  if (url.includes(".")) {
+    return url;
+  } else {
+    return null;
+  }
+}
 async function shareUrl() {
   const res = document.getElementById("largeUrlArea") as HTMLTextAreaElement;
   let eurl: string = res.value;
   eurl = eurl.trim();
-  const validatedUrl = eurl;
+  const validatedUrl = validateUrl(eurl);
   if (!validatedUrl){
     toast.error("Please enter a valid URL");
     return;
