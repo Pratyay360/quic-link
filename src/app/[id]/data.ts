@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { createServer } from "@/lib/supabase/server";
 
-export async function getData(id: string): Promise<{ id: string; initialText: string } | { redirectUrl: string } | null> {
+export async function getData(id: string): Promise<{ id: any; initialText: any } | { redirectUrl: string } | null> {
   const supabase = await createServer();
   const length = id.length;
 
