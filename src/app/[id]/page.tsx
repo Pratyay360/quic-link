@@ -13,12 +13,10 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const data = await getData(params.id);
 
-  // Handle redirect case (for short URLs)
   if (data && "redirectUrl" in data) {
     redirect(data.redirectUrl);
   }
 
-  // Handle shared text case
   if (data && "id" in data && "initialText" in data) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-slate-100 dark:bg-slate-800 p-4">
@@ -31,6 +29,6 @@ export default async function Page({ params }: PageProps) {
     );
   }
 
-  // Fallback if data is invalid (shouldn’t happen if getData is correct)
+  // fallback in case getData didn’t handle 404 properly
   notFound();
 }
