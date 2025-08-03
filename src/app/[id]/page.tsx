@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   if ("id" in data && "initialText" in data) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-100 dark:bg-slate-800 p-4">
+      <div className="flex justify-center items-center min-h-screen p-4">
         <SharedTextCard
           id={data.id}
           initialText={data.initialText}

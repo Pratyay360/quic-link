@@ -72,7 +72,7 @@ export default function SharedTextCard({
             onClick={handleDelete}
             disabled={isDeleting}
             variant="destructive"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-red-700"
           >
             <Trash2 className="h-4 w-4" />
             <span>{isDeleting ? "Deleting..." : "Delete"}</span>
