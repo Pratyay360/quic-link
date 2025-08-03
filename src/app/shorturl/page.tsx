@@ -6,111 +6,124 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
-import createClient from "@/../utils/supabase";
-function validateUrl(url: string): string | null {
-  if (url.includes(".")) {
-    return url;
-  } else {
-    return null;
+import { createClient } from "@/lib/supabase/client";
+import { useState, useRef } from "react";
+
+function validateUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
   }
 }
-async function shareUrl() {
-  const res = document.getElementById("largeUrlArea") as HTMLTextAreaElement;
-  let eurl: string = res.value;
-  eurl = eurl.trim();
-  const validatedUrl = validateUrl(eurl);
-  if (!validatedUrl){
-    toast.error("Please enter a valid URL");
-    return;
-  } else {
-    eurl = validatedUrl; // Use the validated and potentially modified URL
-    const supabase = await createClient;
-    const short = "abcdefghijklmnopqrstuvwxyz";
-    const capital = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const numbers = "0123456789";
-    const all = short + capital + numbers;
-    let result = "";
-    for (let i = 0; i < 8; i++) {
-      result += all[Math.floor(Math.random() * all.length)];
+
+export default function ShortUrlPage() {
+  const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const largeUrlRef = useRef<HTMLTextAreaElement>(null);
+  const urlRef = useRef<HTMLTextAreaElement>(null);
+
+  const shareUrl = async () => {
+    const longUrl = largeUrlRef.current?.value.trim();
+    if (!longUrl || !validateUrl(longUrl)) {
+      toast.error("Please enter a valid URL");
+      return;
     }
 
-    await supabase
-      .from("shorturls")
-      .insert([{ id: result, large_url: eurl }])
-      .then(() => {
-        const element = document.getElementById("hideC");
-        if (element) {
-          element.classList.remove("hidden");
-          const url = document.getElementById("url") as HTMLTextAreaElement;
-          url.value = `https://quic-link.netlify.app/${result}`;
-          toast.success("URL shared");
-        }
-      });
-  }
-}
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+      const short = "abcdefghijklmnopqrstuvwxyz";
+      const capital = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const numbers = "0123456789";
+      const all = short + capital + numbers;
+      let result = "";
+      for (let i = 0; i < 8; i++) {
+        result += all[Math.floor(Math.random() * all.length)];
+      }
 
-function copyUrl() {
-  const url = document.getElementById("url") as HTMLTextAreaElement;
-  url.select();
-  navigator.clipboard.writeText(url.value);
-  toast.success("URL copied");
-}
-export default function Home() {
+      const { error } = await supabase
+        .from("shorturls")
+        .insert([{ id: result, large_url: longUrl, created_at: new Date().toISOString() }]);
+
+      if (error) {
+        toast.error("Error sharing URL: " + error.message);
+      } else {
+        setSharedUrl(`${window.location.origin}/${result}`);
+        toast.success("URL shortened successfully!");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyUrl = () => {
+    if (urlRef.current) {
+      urlRef.current.select();
+      navigator.clipboard.writeText(urlRef.current.value);
+      toast.success("URL copied to clipboard");
+    }
+  };
+
   return (
-    <>
-      <div className="flex justify-center items-center min-h-screen bg-slate-100 dark:bg-slate-800">
-        <Card className="w-full max-w-md p-6 bg-gray-200 rounded-lg shadow-md dark:bg-gray-700 border-violet-600 dark:border-amber-500">
-          <CardHeader>
-            <CardTitle className="text-black dark:text-gray-100">
-              Shorten Url
-            </CardTitle>
-            <CardDescription className="text-black dark:text-gray-100">
-              Shorten your long URL to a unique URL that can be accessed by
-              anyone.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+    <div className="flex justify-center items-center min-h-[calc(100vh-3.5rem)] p-4">
+      <Toaster richColors closeButton position="bottom-right" expand={true} />
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>URL Shortener</CardTitle>
+          <CardDescription>
+            Shorten your long URLs to shareable links
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="largeUrlArea">Your Long URL</Label>
               <Textarea
-                placeholder="Enter long url here"
+                ref={largeUrlRef}
+                placeholder="Enter long URL here (e.g. https://example.com)"
                 id="largeUrlArea"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
                 rows={4}
+                disabled={isLoading}
               />
-              <Button
-                onClick={shareUrl}
-                className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Share
+            </div>
+            <Button
+              onClick={shareUrl}
+              disabled={isLoading}
+              className="w-full bg-purple-500 text-white hover:bg-purple-400 dark:bg-purple-800 dark:hover:bg-purple-700"
+            >
+              {isLoading ? "Shortening..." : "Shorten URL"}
+            </Button>
+          </div>
+          {sharedUrl && (
+            <div className="mt-6 flex items-center space-x-2">
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="url">Shortened URL</Label>
+                <Textarea
+                  ref={urlRef}
+                  id="url"
+                  readOnly
+                  value={sharedUrl}
+                  className="flex-grow"
+                />
+              </div>
+              <Button onClick={copyUrl} size="icon" className="h-full bg-blue-300">
+                <Copy className="h-4 w-4" />
+                <span className="sr-only">Copy URL</span>
               </Button>
             </div>
-            <div className="hidden" id="hideC">
-              <div className="flex items-center space-x-2 mt-4 ">
-                <Textarea
-                  id="url"
-                  className="flex-grow p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
-                  readOnly
-                />
-                <CardFooter className="flex justify-between">
-                  <Button
-                    onClick={copyUrl}
-                    className="flex items-center space-x-1 bg-gray-200 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-300 transition duration-300"
-                  >
-                    <Copy size={18} />
-                    <span>Copy</span>
-                  </Button>
-                </CardFooter>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Toaster richColors closeButton position="bottom-right" expand={true} />
-      </div>
-    </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

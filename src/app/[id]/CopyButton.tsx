@@ -1,21 +1,29 @@
 'use client';
-
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CopyButton({ text }: { text: string }) {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    toast.success("Text copied");
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy");
+      console.error("Failed to copy text: ", err);
+    }
   };
 
   return (
     <Button
+      type="button"
       onClick={handleCopy}
-      className="flex items-center space-x-1 bg-gray-200 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-300 transition duration-300"
+      aria-label="Copy to clipboard"
+      variant="outline"
+      size="sm"
+      className="flex items-center gap-1"
     >
-      <Copy size={18} />
+      <Copy className="h-4 w-4" />
       <span>Copy</span>
     </Button>
   );

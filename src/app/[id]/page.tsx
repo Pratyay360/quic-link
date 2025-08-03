@@ -1,60 +1,29 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/../utils/supabase/server";
+import { getData } from "./data";
 import SharedTextCard from "./SharedTextCard";
+import { deleteSharedText } from "./actions";
+import { redirect } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
-  const length = id.length;
-  const supabase = await createClient();
-  let datas: string = "";
+  const data = await getData(params.id);
 
-  if (length == 6) {
-    const { data: sharedtext } = await supabase
-      .from("sharedtext")
-      .select("*")
-      .match({ id: id });
-    if (sharedtext) {
-      let dat = sharedtext[0]?.shared_text;
-      if (dat) {
-        datas = dat;
-      } else {
-        redirect("/datanotfound");
-      }
-    } else {
-      redirect("/");
-    }
-  } else if (length >= 6) {
-    const { data: shorturls } = await supabase
-      .from("shorturls")
-      .select("large_url")
-      .match({ id: id });
-    if (shorturls) {
-      redirect(shorturls[0]?.large_url);
-    } else {
-      redirect("/datanotfound");
-    }
-  } else {
-    redirect("/");
+  // Handle redirect case (for short URLs)
+  if (data && 'redirectUrl' in data) {
+    redirect(data.redirectUrl);
   }
 
-  async function deleteData(id: string) {
-    "use server";
-    const supabase = await createClient();
-    const { error } = await supabase.from("sharedtext").delete().eq("id", id);
-    if (error) {
-      throw error;
-    } else {
-      redirect("/");
-    }
+  // Handle shared text case
+  if (data && 'id' in data && 'initialText' in data) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-slate-100 dark:bg-slate-800 p-4">
+        <SharedTextCard
+          id={data.id}
+          initialText={data.initialText}
+          onDelete={deleteSharedText}
+        />
+      </div>
+    );
   }
 
-  return (
-    <>
-      {length == 6 ? (
-        <SharedTextCard id={id} initialText={datas} onDelete={deleteData} />
-      ) : (
-        <>{JSON.stringify(datas)}</>
-      )}
-    </>
-  );
+  // This case should be handled by getData calling notFound()
+  return null;  
 }
