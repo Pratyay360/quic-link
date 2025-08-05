@@ -1,0 +1,9 @@
+{
+  "/[id]/page": "app/[id]/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/navbar/page": "app/navbar/page.js",
+  "/page": "app/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/sharetext/page": "app/sharetext/page.js",
+  "/shorturl/page": "app/shorturl/page.js"
+}

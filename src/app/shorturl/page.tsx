@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useRef } from "react";
@@ -87,7 +86,7 @@ export default function ShortUrlPage() {
         <CardContent>
           <div className="space-y-4">
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="largeUrlArea">Your Long URL</Label>
+              <label htmlFor="largeUrlArea">Your Long URL</label>
               <Textarea
                 ref={largeUrlRef}
                 placeholder="Enter long URL here (e.g. https://example.com)"
@@ -107,7 +106,7 @@ export default function ShortUrlPage() {
           {sharedUrl && (
             <div className="mt-6 flex items-center space-x-2">
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="url">Shortened URL</Label>
+                <label htmlFor="url">Shortened URL</label>
                 <Textarea
                   ref={urlRef}
                   id="url"

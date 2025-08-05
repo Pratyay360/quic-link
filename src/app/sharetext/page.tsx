@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useRef } from "react";
@@ -79,7 +78,7 @@ export default function ShareTextPage() {
         <CardContent>
           <div className="space-y-4">
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="textArea">Your Text</Label>
+              <label htmlFor="textArea">Your Text</label>
               <Textarea
                 ref={textAreaRef}
                 placeholder="Enter text here"
@@ -99,7 +98,7 @@ export default function ShareTextPage() {
           {sharedUrl && (
             <div className="mt-4 flex items-center space-x-2">
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="url">Shared URL</Label>
+                <label htmlFor="url">Shared URL</label>
                 <Textarea
                   ref={urlRef}
                   id="url"
