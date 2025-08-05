@@ -4,6 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
+.open-next/
+.wrangler/
+
 .yarn/install-state.gz
 package-*.json
 pnpm-lock.yaml
