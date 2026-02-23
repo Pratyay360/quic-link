@@ -21,7 +21,7 @@ const { title = "Quic-Link", description = "Quic-Link is a simple URL shortener 
     <title>{title}</title>
     <ViewTransitions />
     <script is:inline>
-      const theme = (() => {
+      const getTheme = () => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
           return localStorage.getItem('theme');
         }
@@ -29,18 +29,28 @@ const { title = "Quic-Link", description = "Quic-Link is a simple URL shortener 
           return 'dark';
         }
         return 'light';
-      })();
+      };
+    
+      const theme = getTheme();
     
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      window.localStorage.setItem('theme', theme);
+
+      document.addEventListener('astro:after-swap', () => {
+        const theme = getTheme();
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      });
     </script>
   </head>
   <body>
-    <Navbar client:load />
+    <Navbar client:load transition:persist />
     <slot />
   </body>
 </html>

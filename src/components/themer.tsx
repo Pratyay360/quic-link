@@ -10,6 +10,31 @@ export function ModeToggle() {
   React.useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
+
+    const syncTheme = () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      setTheme(isDark ? "dark" : "light");
+    };
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem("theme")) {
+        if (e.matches) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+        syncTheme();
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleSystemChange);
+    document.addEventListener("astro:after-swap", syncTheme);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleSystemChange);
+      document.removeEventListener("astro:after-swap", syncTheme);
+    };
   }, []);
 
   const toggleTheme = () => {

@@ -15,8 +15,7 @@ pnpm-lock.yaml
 /.next/
 /out/
 dist/
-# production
-/build
+ /build
 
 # misc
 .DS_Store
