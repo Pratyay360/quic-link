@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/netlify": "^6.6.4",
     "@astrojs/node": "^9.5.4",
     "@astrojs/react": "^4.4.2",
     "@radix-ui/react-dialog": "^1.1.6",
