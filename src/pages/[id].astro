@@ -1,0 +1,25 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import SharedTextCard from '@/components/SharedTextCard';
+import { getData } from './[id]/data';
+
+const { id } = Astro.params;
+const data = await getData(id);
+
+if (!data) {
+  // Simple Not Found display
+  return new Response("Not found", { status: 404 });
+}
+
+if ("redirectUrl" in data) {
+  return Astro.redirect(data.redirectUrl);
+}
+
+const { id: cardId, initialText } = data;
+---
+
+<Layout title="Shared Text - Quic-Link">
+  <div class="flex justify-center items-center min-h-screen p-4">
+    <SharedTextCard client:load id={cardId} initialText={initialText} />
+  </div>
+</Layout>
