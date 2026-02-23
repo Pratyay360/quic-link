@@ -2,8 +2,10 @@ import PocketBase from "pocketbase";
 
 export async function getData(
   id: string,
-): Promise<{ id: string; initialText: string } | { redirectUrl: string } | null> {
-  const pb = new PocketBase(import.meta.env.POCKETBASE_URL);
+): Promise<
+  { id: string; initialText: string } | { redirectUrl: string } | null
+> {
+  const pb = new PocketBase(import.meta.env.PUBLIC_POCKETBASE_URL);
   const length = id.length;
 
   try {
